@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/volatiletech/sqlboiler/v4/drivers"
+	_ "modernc.org/sqlite"
 )
 
 var (
@@ -28,7 +28,7 @@ func TestDriver(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tmpName := filepath.Join(os.TempDir(), fmt.Sprintf("sqlboiler-sqlite3-%d.sql", rand.Int()))
+	tmpName := filepath.Join(os.TempDir(), fmt.Sprintf("sqlboiler-sqlite-%d.sql", rand.Int()))
 
 	out := &bytes.Buffer{}
 	createDB := exec.Command("sqlite3", tmpName)
@@ -59,14 +59,14 @@ func TestDriver(t *testing.T) {
 	}
 
 	if *flagOverwriteGolden {
-		if err = ioutil.WriteFile("sqlite3.golden.json", got, 0664); err != nil {
+		if err = ioutil.WriteFile("sqlite.golden.json", got, 0664); err != nil {
 			t.Fatal(err)
 		}
 		t.Log("wrote:", string(got))
 		return
 	}
 
-	want, err := ioutil.ReadFile("sqlite3.golden.json")
+	want, err := ioutil.ReadFile("sqlite.golden.json")
 	if err != nil {
 		t.Fatal(err)
 	}

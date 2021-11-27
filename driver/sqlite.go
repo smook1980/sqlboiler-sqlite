@@ -8,16 +8,16 @@ import (
 	"strings"
 
 	// Load the driver
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
+
 	"github.com/pkg/errors"
+	"github.com/smook1980/sqlboiler-sqlite/driver/override"
 	"github.com/volatiletech/sqlboiler/v4/drivers"
 	"github.com/volatiletech/sqlboiler/v4/importers"
 )
 
-//go:generate go-bindata -nometadata -pkg driver -prefix override override/...
-
 func init() {
-	drivers.RegisterFromInit("sqlite3", &SQLiteDriver{})
+	drivers.RegisterFromInit("sqlite", &SQLiteDriver{})
 }
 
 // Assemble the db info
@@ -35,10 +35,10 @@ type SQLiteDriver struct {
 
 // Templates for the driver
 func (s SQLiteDriver) Templates() (map[string]string, error) {
-	names := AssetNames()
+	names := override.AssetNames()
 	tpls := make(map[string]string)
 	for _, n := range names {
-		b, err := Asset(n)
+		b, err := override.Asset(n)
 		if err != nil {
 			return nil, err
 		}
@@ -63,7 +63,7 @@ func (s SQLiteDriver) Assemble(config drivers.Config) (dbinfo *drivers.DBInfo, e
 	blacklist, _ := config.StringSlice(drivers.ConfigBlacklist)
 
 	s.connStr = SQLiteBuildQueryString(dbname)
-	s.dbConn, err = sql.Open("sqlite3", s.connStr)
+	s.dbConn, err = sql.Open("sqlite", s.connStr)
 	if err != nil {
 		return nil, errors.Wrap(err, "sqlboiler-sqlite failed to connect to database")
 	}
@@ -103,7 +103,7 @@ func SQLiteBuildQueryString(file string) string {
 func (s SQLiteDriver) Open() error {
 	var err error
 
-	s.dbConn, err = sql.Open("sqlite3", s.connStr)
+	s.dbConn, err = sql.Open("sqlite", s.connStr)
 	if err != nil {
 		return err
 	}
@@ -477,7 +477,7 @@ func (SQLiteDriver) TranslateColumnType(c drivers.Column) drivers.Column {
 // Imports returns important imports for the driver
 func (SQLiteDriver) Imports() (col importers.Collection, err error) {
 	col.TestSingleton = importers.Map{
-		"sqlite3_main_test": {
+		"sqlite_main_test": {
 			Standard: importers.List{
 				`"database/sql"`,
 				`"fmt"`,
@@ -491,7 +491,7 @@ func (SQLiteDriver) Imports() (col importers.Collection, err error) {
 			ThirdParty: importers.List{
 				`"github.com/pkg/errors"`,
 				`"github.com/spf13/viper"`,
-				`_ "github.com/mattn/go-sqlite3"`,
+				`_ "github.com/mattn/go-sqlite"`,
 			},
 		},
 	}
