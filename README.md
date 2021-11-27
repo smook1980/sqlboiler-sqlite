@@ -1,17 +1,12 @@
 # sqlboiler-sqlite
 
-This package is a driver for sqlboiler. It requires cgo to build and
-therefore is not in the main tree.
+This package is a sqlboiler driver for sqlite without any c-go dependencies. 
 
 ## Installation
 
-This package depends on the `database/sql` sqlite driver https://github.com/mattn/go-sqlite,
-which requires cgo and the sqlite .so/.dll installed. Refer to the installation
-of the `github.com/mattn/go-sqlite` to complete this step.
-
-Installation is simple, just use `go get`. Once the binary is in
-your path `sqlboiler` will be able to use it if you run it with the
-driver name `sqlite`.
+This package depends on the `database/sql` sqlite driver https://modernc.org/sqlite. 
+Installation is simple, just use `go get`. Once the binary is in your path `sqlboiler` 
+will be able to use it if you run it with the driver name `sqlite`.
 
 ```bash
 # Note: You must run this outside of your Go module directory. This must be done
@@ -34,9 +29,3 @@ It's configuration keys in sqlboiler are simple:
 dbname = "/path/to/file"
 ```
 
-## Development
-
-This does use go-bindata to embed templates into the binary.
-You can run `go-generate` in the driver folder to re-gen the bindata
-after modifying templates. Other than that `go build` should be able to
-be used to build the binary.
